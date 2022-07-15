@@ -6,8 +6,8 @@ namespace JokeApp.Model
     {
         public int Id { get; set; }
 
-       [Display(Name = "Joke Question")]
-       [Required(ErrorMessage = "The set-up of the joke is needed for the joke to make sense.")]
+        [Display(Name = "Joke Question")]
+        [Required(ErrorMessage = "The set-up of the joke is needed for the joke to make sense.")]
         public string? JokeQuestion { get; set; }
 
         [Display(Name = "Joke Answer")]

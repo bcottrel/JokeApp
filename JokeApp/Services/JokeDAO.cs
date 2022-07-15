@@ -1,17 +1,22 @@
 ﻿using JokeApp.Model;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace JokeApp.Services
 {
     public class JokeDAO : IJokeDataService
     {
-        string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;
-        Initial Catalog=aspnet-JokeApp-3E3CAA9A-C513-46C7-8AAA-CD8CC4EF959F;
-        Integrated Security=True;Connect Timeout=30;Encrypt=False;
-        TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+        /* string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;
+         Initial Catalog=aspnet-JokeApp-3E3CAA9A-C513-46C7-8AAA-CD8CC4EF959F;
+         Integrated Security=True;Connect Timeout=30;Encrypt=False;
+         TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+        */
 
-        public void Delete(Joke joke)
+        
+        
+        public void Delete(Joke joke, IConfiguration configuration)
         {
+            string connectionString = configuration.GetConnectionString("DefaultConnection");
             string sqlStatement = "Delete FROM dbo.Joke WHERE Id = @Id";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -32,10 +37,11 @@ namespace JokeApp.Services
                 }
             }
         } 
-
+        
         //Returns All jokes from the database
-        public List<Joke> GetAllJokes()
+        public List<Joke> GetAllJokes(IConfiguration configuration)
         {
+            string connectionString = configuration.GetConnectionString("DefaultConnection");
             List<Joke> foundJokes = new List<Joke>();
 
             string sqlStatement = "Select * FROM dbo.Joke";
@@ -66,11 +72,15 @@ namespace JokeApp.Services
             }
             return foundJokes;
         }
-        //Search for a certain phrase in the joke's Question and Answer
-        public List<Joke> SearchJokes(string search)
-        {
-            List<Joke> jokes = new List<Joke>();
+    
 
+        
+        //Search for a certain phrase in the joke's Question and Answer
+        public List<Joke> SearchJokes(string search, IConfiguration configuration)
+        {
+
+            List<Joke> jokes = new List<Joke>();
+            string connectionString = configuration.GetConnectionString("DefaultConnection");
             string sqlStatement = "Select * FROM dbo.Joke WHERE JokeQuestion LIKE @JokeQuestion " +
                 "OR JokeAnswer LIKE @JokeAnswer";
 
@@ -106,8 +116,9 @@ namespace JokeApp.Services
             return jokes;
         }
 
-        public int Insert(Joke joke)
+        public int Insert(Joke joke, IConfiguration configuration)
         {
+            string connectionString = configuration.GetConnectionString("DefaultConnection");
             int newIdNumber = -1;
 
             string sqlStatement = "INSERT INTO dbo.Joke(JokeQuestion,JokeAnswer) " +
@@ -136,8 +147,9 @@ namespace JokeApp.Services
             return newIdNumber;
         }
 
-        public int Update(Joke joke)
+        public int Update(Joke joke, IConfiguration configuration)
         {
+            string connectionString = configuration.GetConnectionString("DefaultConnection");
             int newIdNumber = -1;
 
             string sqlStatement = "Update dbo.Joke SET " +
@@ -167,8 +179,9 @@ namespace JokeApp.Services
             return newIdNumber;
         } 
 
-        public Joke FindId(int? id)
+        public Joke FindId(int? id, IConfiguration configuration)
         {
+            string connectionString = configuration.GetConnectionString("DefaultConnection");
             Joke? jokes = null;
 
             string sqlStatement = "Select * FROM dbo.Joke WHERE Id = @Id";
@@ -204,3 +217,4 @@ namespace JokeApp.Services
         }
     }
 }
+        

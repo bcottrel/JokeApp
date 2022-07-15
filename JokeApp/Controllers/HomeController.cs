@@ -1,4 +1,5 @@
 ﻿using JokeApp.Model;
+using JokeApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -7,15 +8,19 @@ namespace JokeApp.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IConfiguration _configuration; 
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
         {
+            _configuration = configuration;
             _logger = logger;
         }
 
         public IActionResult Index()
         {
-            return View();
+            JokeDAO jokes = new JokeDAO();
+
+            return View(jokes.GetAllJokes(_configuration));
         }
 
         public IActionResult Privacy()

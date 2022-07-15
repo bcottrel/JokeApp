@@ -2,127 +2,103 @@
 using Microsoft.EntityFrameworkCore;
 using JokeApp.Data;
 using JokeApp.Model;
+using JokeApp.Services.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JokeApp.Controllers
 {
     public class OldJokesController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public OldJokesController(ApplicationDbContext context)
+        // GET: Joke
+        public async Task<IActionResult> Index(IJokeData data)
         {
-            _context = context;
+              return data.GetJokes != null ? 
+                          View(await data.GetJokes()) :
+                          Problem("There are no jokes.");
         }
 
-        // GET: Jokes
-        public async Task<IActionResult> Index()
+        // GET: Joke/Details/
+        public async Task<IActionResult> Details(IJokeData data, int id)
         {
-              return _context.Joke != null ? 
-                          View(await _context.Joke.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Joke'  is null.");
-        }
-
-        // GET: Jokes/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Joke == null)
+            if (data.GetJoke(id) == null)
             {
                 return NotFound();
             }
 
-            var joke = await _context.Joke
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var joke = await data.GetJoke(id);
+
             if (joke == null)
             {
                 return NotFound();
             }
 
-            return View(joke);
+            return View("Details", joke);
         }
 
-        // GET: Jokes/Create
-        public IActionResult Create()
+        // GET: Joke/Create
+        [Authorize]
+        public IActionResult ProcessCreate()
         {
             return View();
         }
 
-        // POST: Jokes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Joke/Create
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,JokeQuestion,JokeAnswer")] Joke joke)
+        public async Task<IActionResult> Create(IJokeData data, [Bind("Id,JokeQuestion,JokeAnswer")] Joke joke)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(joke);
-                await _context.SaveChangesAsync();
+                await data.InsertJoke(joke);
+                TempData["success"] = "Joke Created";
                 return RedirectToAction(nameof(Index));
             }
             return View(joke);
         }
 
-        // GET: Jokes/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // GET: Joke/Edit/5
+        [Authorize]
+        public async Task<IActionResult> Edit(IJokeData data ,int id)
         {
-            if (id == null || _context.Joke == null)
-            {
-                return NotFound();
-            }
+            var joke = await data.GetJoke(id);
 
-            var joke = await _context.Joke.FindAsync(id);
             if (joke == null)
             {
                 return NotFound();
             }
-            return View(joke);
+
+            return View("ShowEdit", joke);
         }
 
-        // POST: Jokes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Joke/Edit/5
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,JokeQuestion,JokeAnswer")] Joke joke)
+        public async Task<IActionResult> Edit(IJokeData data, [Bind("Id,JokeQuestion,JokeAnswer")]Joke joke)
         {
-            if (id != joke.Id)
-            {
-                return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(joke);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!JokeExists(joke.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await data.UpdateJoke(joke);
+                TempData["success"] = "Joke Edited";
+
                 return RedirectToAction(nameof(Index));
             }
             return View(joke);
         }
 
-        // GET: Jokes/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Joke/Delete/5
+        [Authorize]
+        public async Task<IActionResult> Delete(IJokeData data, int id)
         {
-            if (id == null || _context.Joke == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var joke = await _context.Joke
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var joke = await data.GetJoke(id);
+    
             if (joke == null)
             {
                 return NotFound();
@@ -131,28 +107,18 @@ namespace JokeApp.Controllers
             return View(joke);
         }
 
-        // POST: Jokes/Delete/5
+        // POST: Joke/Delete/5
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> ProcessDelete(IJokeData data,int id)
         {
-            if (_context.Joke == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Joke'  is null.");
-            }
-            var joke = await _context.Joke.FindAsync(id);
-            if (joke != null)
-            {
-                _context.Joke.Remove(joke);
-            }
+            await data.DeleteJoke(id);
+            TempData["success"] = "Joke Deleted";
             
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool JokeExists(int id)
-        {
-          return (_context.Joke?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+        // Get Joke/SearchResults
     }
 }

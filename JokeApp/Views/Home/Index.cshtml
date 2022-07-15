@@ -1,8 +1,23 @@
-﻿@{
+﻿@model IEnumerable<JokeApp.Model.Joke>
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
+    <hr />
     <p>Joke application concept to test out .net features.</p>
+</div>
+<table class="index w-50">
+    <tr>
+        <td class="text-center mx-2 w-50">
+            @Model.First().JokeQuestion
+        </td>
+        <td class="text-center mx-2 w-50"> 
+            @Model.First().JokeAnswer
+        </td>
+    </tr>
+</table>
+<div class="text-center">
+    <p> This will be text</p>
 </div>
