@@ -139,7 +139,6 @@ namespace JokeApp.Services
 
                 }
                 catch (Exception e)
-
                 {
                     Console.WriteLine(e.Message);
                 }
@@ -214,6 +213,30 @@ namespace JokeApp.Services
                 }
             }
             return jokes;
+        }
+
+        public int NumberOfJokes(IConfiguration configuration)
+        {
+            string connectionString = configuration.GetConnectionString("DefaultConnection");
+            int count = -1;
+
+            string sqlStatement = "Select COUNT(*) from dbo.Joke";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand(sqlStatement, connection);
+
+                try
+                {
+                    connection.Open();
+                    count = Convert.ToInt32(command.ExecuteScalar());
+                }
+
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+            return count;
         }
     }
 }
