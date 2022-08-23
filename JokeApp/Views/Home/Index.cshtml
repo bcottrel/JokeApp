@@ -1,4 +1,4 @@
-﻿@model IEnumerable<JokeApp.Model.Joke>
+﻿@model JokeApp.Model.Joke
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -8,16 +8,17 @@
     <hr />
     <p>Joke application concept to test out .net features.</p>
 </div>
-<table class="index w-50">
+<table class="index w-60">
     <tr>
         <td class="text-center mx-2 w-50">
-            @Model.First().JokeQuestion
+            @Html.DisplayFor(model => model.JokeQuestion)
         </td>
+        <td width="2"></td>
         <td class="text-center mx-2 w-50"> 
-            @Model.First().JokeAnswer
+            @Html.DisplayFor(model => model.JokeAnswer)
         </td>
     </tr>
 </table>
-<div class="text-center">
-    <p> This will be text</p>
+<div class="text-center m-2">
+    <a asp-action="Index" class="btn btn-primary text-white" role="reset" value="reset">New Joke</a>
 </div>

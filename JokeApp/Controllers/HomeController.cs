@@ -19,8 +19,8 @@ namespace JokeApp.Controllers
         public IActionResult Index()
         {
             JokeDAO jokes = new JokeDAO();
-
-            return View(jokes.GetAllJokes(_configuration));
+            Joke joke = jokes.RandomJoke(_configuration);
+            return View(joke);
         }
 
         public IActionResult Privacy()

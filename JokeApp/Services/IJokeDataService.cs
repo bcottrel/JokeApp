@@ -10,6 +10,6 @@ namespace JokeApp.Services
         int Insert(Joke joke, IConfiguration configuration);
         int Update(Joke joke, IConfiguration configuration);
         void Delete(Joke joke, IConfiguration configuration);
-        int NumberOfJokes(IConfiguration configuration);
+        Joke RandomJoke(IConfiguration configuration);
     }
 }

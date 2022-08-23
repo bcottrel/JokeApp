@@ -215,12 +215,12 @@ namespace JokeApp.Services
             return jokes;
         }
 
-        public int NumberOfJokes(IConfiguration configuration)
+        public Joke RandomJoke(IConfiguration configuration)
         {
             string connectionString = configuration.GetConnectionString("DefaultConnection");
-            int count = -1;
+            Joke? joke = null;
 
-            string sqlStatement = "Select COUNT(*) from dbo.Joke";
+            string sqlStatement = "SELECT TOP 1 * FROM dbo.Joke ORDER BY NEWID()";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 SqlCommand command = new SqlCommand(sqlStatement, connection);
@@ -228,7 +228,19 @@ namespace JokeApp.Services
                 try
                 {
                     connection.Open();
-                    count = Convert.ToInt32(command.ExecuteScalar());
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        joke = new Joke
+                        {
+                            Id = (int)reader[0],
+                            JokeQuestion = (string)reader[1],
+                            JokeAnswer = (string)reader[2]
+                        };
+                    }
+
+
                 }
 
                 catch (Exception e)
@@ -236,7 +248,7 @@ namespace JokeApp.Services
                     Console.WriteLine(e.Message);
                 }
             }
-            return count;
+            return joke;
         }
     }
 }
