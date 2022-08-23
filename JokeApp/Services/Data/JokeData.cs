@@ -1,4 +1,4 @@
-﻿using JokeApp.Model;
+﻿using JokeApp.Models;
 using JokeApp.Services.DbAccess;
 
 namespace JokeApp.Services.Data;

@@ -1,4 +1,4 @@
-﻿using JokeApp.Model;
+﻿using JokeApp.Models;
 
 namespace JokeApp.Services.Data;
 
