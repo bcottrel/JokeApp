@@ -1,7 +1,8 @@
 Joke application I created to test out asp.net features. 
 
 azure website: https://brianjokeapp.azurewebsites.net/
-I need to whitelist ip's for someone to see the website's data. 
+
+*I need to whitelist ip's for someone to see the website's data and for the website to function in any capacity.* 
 
 Resources needed to run;
 
