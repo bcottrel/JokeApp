@@ -1,5 +1,5 @@
 ﻿using JokeApp.Models;
-using Microsoft.Data.SqlClient;
+using System.Data.SqlClient;
 
 namespace JokeApp.Services;
 
