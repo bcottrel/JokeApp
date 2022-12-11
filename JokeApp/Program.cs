@@ -8,10 +8,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+builder.Services.AddRazorPages();
 builder.Services.AddAuth0WebAppAuthentication(options =>
 {
     options.Domain = builder.Configuration["Auth0:Domain"];
     options.ClientId = builder.Configuration["Auth0:ClientId"];
+    options.ClientSecret = builder.Configuration["Auth0:ClientSecret"];
 });
 
 builder.Services.AddControllersWithViews();
@@ -39,6 +41,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-//app.MapRazorPages();
+
+app.MapRazorPages();
 
 app.Run();

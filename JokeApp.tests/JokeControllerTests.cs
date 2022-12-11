@@ -1,10 +1,10 @@
 ﻿using Xunit;
 using Moq;
-using JokeApp.Model;
 using JokeApp.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using JokeApp.Services;
+using JokeApp.Models;
 
 namespace JokeApp.tests
 {
