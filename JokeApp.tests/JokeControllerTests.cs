@@ -30,7 +30,26 @@ public class HomeControllerTests
         Assert.Equal(3, model.Count());
     }
 
+    [Fact]
+    public void SearchResults_ReturnSearchTerm()
+    {
+        // Arrange
+        string s = "Frisbe";
+        var mock = new Mock<IJokeDataService>();
+        mock.Setup(x => x.SearchJokes(s))
+        .Returns(GetSampleJokes());
+        var controller = new JokeController(mock.Object);
 
+        //Act
+        var result = controller.SearchResults(s);
+
+        //Assert
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var returnValue = Assert.IsType<List<Joke>>(viewResult.Model);
+        var idea = returnValue.FirstOrDefault();
+        Assert.Equal("Frisbe" , idea.JokeAnswer);
+
+    }
 
     private List<Joke> GetSampleJokes()
     {
@@ -39,18 +58,21 @@ public class HomeControllerTests
 
             new Joke
             {
+                Id = 0,
                 JokeQuestion = "The",
                 JokeAnswer = "Frisbe"
             },
             new Joke
             {
-                JokeQuestion = "The",
-                JokeAnswer = "Frisbe"
+                Id = 1,
+                JokeQuestion = "Went",
+                JokeAnswer = "Over"
             },
             new Joke
             {
+                Id = 2,
                 JokeQuestion = "The",
-                JokeAnswer = "Frisbe"
+                JokeAnswer = "Rainbow"
             }
 
         };
