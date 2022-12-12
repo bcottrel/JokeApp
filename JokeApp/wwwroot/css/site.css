@@ -21,14 +21,6 @@ body {
     background-color: black;
 }
 
-.btn {
-    color: white;
-}
-
-.btn:hover{
-    color: black;
-}
-
 .front {
     margin-top: 250px;
 }
