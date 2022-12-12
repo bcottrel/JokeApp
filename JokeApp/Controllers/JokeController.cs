@@ -9,19 +9,17 @@ namespace JokeApp.Controllers;
 
 public class JokeController : Controller
 {    
-    private readonly IConfiguration _configuration;
+    private readonly IJokeDataService _jokeData;
 
-    public JokeController(IConfiguration configuration)
+    public JokeController(IJokeDataService jokeData)
     {
-        _configuration = configuration;
+        _jokeData = jokeData;
     }
 
     //GET: JokeController/
     public IActionResult Index()
     {
-        JokeDAO jokes = new JokeDAO();
-
-        return View(jokes.GetAllJokes(_configuration));
+        return View(_jokeData.GetAllJokes());
     }
     
     public IActionResult SearchForm()
@@ -32,8 +30,7 @@ public class JokeController : Controller
     //Get Joke/SearchResults/
     public IActionResult SearchResults(string searchTerm)
     {
-        JokeDAO jokes = new JokeDAO();
-        List<Joke> jokeList = jokes.SearchJokes(searchTerm, _configuration);
+        List<Joke> jokeList = _jokeData.SearchJokes(searchTerm);
 
         return View("index", jokeList);
     }
@@ -53,8 +50,7 @@ public class JokeController : Controller
     public IActionResult ProcessCreate([Bind("Id,JokeQuestion,JokeAnswer")]Joke joke)
     {
         if (ModelState.IsValid) {
-            JokeDAO jokes = new JokeDAO();
-            jokes.Insert(joke, _configuration);
+            _jokeData.Insert(joke);
             TempData["success"] = "Joke Created";
 
             return RedirectToAction("Index");
@@ -70,8 +66,7 @@ public class JokeController : Controller
             return NotFound();
         }
 
-        JokeDAO jokes = new JokeDAO();
-        Joke foundJoke = await Task.Run(() => jokes.FindId(id, _configuration));
+        Joke foundJoke = await Task.Run(() => _jokeData.FindId(id));
 
         if (foundJoke == null)
         {
@@ -90,8 +85,7 @@ public class JokeController : Controller
             return NotFound();
         }
 
-        JokeDAO jokes = new JokeDAO();
-        Joke foundJoke = await Task.Run(() => jokes.FindId(id, _configuration));
+        Joke foundJoke = await Task.Run(() => _jokeData.FindId(id));
        
         if (foundJoke == null)
         {
@@ -107,8 +101,7 @@ public class JokeController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult ProcessEdit([Bind("Id,JokeQuestion,JokeAnswer")]Joke joke)
     {
-        JokeDAO jokes = new JokeDAO();
-        jokes.Update(joke, _configuration);
+        _jokeData.Update(joke);
         TempData["success"] = "Joke Edited";
         return RedirectToAction("Index");
     }
@@ -122,8 +115,7 @@ public class JokeController : Controller
             return NotFound();
         }
 
-        JokeDAO jokes = new JokeDAO();
-        Joke joke = await Task.Run(() => jokes.FindId(id, _configuration));
+        Joke joke = await Task.Run(() => _jokeData.FindId(id));
 
         if (joke == null)
         {
@@ -138,9 +130,8 @@ public class JokeController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ProcessDelete(int id)
     {
-        JokeDAO jokes = new JokeDAO();
-        Joke joke = await Task.Run(() => jokes.FindId(id, _configuration));
-        jokes.Delete(joke, _configuration);
+        Joke joke = await Task.Run(() => _jokeData.FindId(id));
+        _jokeData.Delete(joke);
         TempData["success"] = "Joke Deleted";
 
         return RedirectToAction("Index");

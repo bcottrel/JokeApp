@@ -4,10 +4,17 @@ using System.Data.SqlClient;
 namespace JokeApp.Services;
 
 public class JokeDAO : IJokeDataService
-{       
-    public void Delete(Joke joke, IConfiguration configuration)
+{
+    private readonly IConfiguration _configuration;
+
+    public JokeDAO(IConfiguration configuration)
     {
-        string connectionString = configuration.GetConnectionString("DefaultConnection");
+        _configuration = configuration;
+    }
+
+    public void Delete(Joke joke)
+    {
+        string connectionString = _configuration.GetConnectionString("DefaultConnection");
         string sqlStatement = "Delete FROM dbo.Joke WHERE Id = @Id";
 
         using (SqlConnection connection = new SqlConnection(connectionString))
@@ -30,9 +37,9 @@ public class JokeDAO : IJokeDataService
     } 
     
     //Returns All jokes from the database
-    public List<Joke> GetAllJokes(IConfiguration configuration)
+    public List<Joke> GetAllJokes()
     {
-        string connectionString = configuration.GetConnectionString("DefaultConnection");
+        string connectionString = _configuration.GetConnectionString("DefaultConnection");
         List<Joke> foundJokes = new List<Joke>();
 
         string sqlStatement = "Select * FROM dbo.Joke";
@@ -65,11 +72,11 @@ public class JokeDAO : IJokeDataService
     }
 
     //Search for a certain phrase in the joke's Question and Answer
-    public List<Joke> SearchJokes(string search, IConfiguration configuration)
+    public List<Joke> SearchJokes(string search)
     {
 
         List<Joke> jokes = new List<Joke>();
-        string connectionString = configuration.GetConnectionString("DefaultConnection");
+        string connectionString = _configuration.GetConnectionString("DefaultConnection");
         string sqlStatement = "Select * FROM dbo.Joke WHERE JokeQuestion LIKE @JokeQuestion " +
             "OR JokeAnswer LIKE @JokeAnswer";
 
@@ -105,9 +112,9 @@ public class JokeDAO : IJokeDataService
         return jokes;
     }
 
-    public int Insert(Joke joke, IConfiguration configuration)
+    public int Insert(Joke joke)
     {
-        string connectionString = configuration.GetConnectionString("DefaultConnection");
+        string connectionString = _configuration.GetConnectionString("DefaultConnection");
         int newIdNumber = -1;
 
         string sqlStatement = "INSERT INTO dbo.Joke(JokeQuestion,JokeAnswer) " +
@@ -135,9 +142,9 @@ public class JokeDAO : IJokeDataService
         return newIdNumber;
     }
 
-    public int Update(Joke joke, IConfiguration configuration)
+    public int Update(Joke joke)
     {
-        string connectionString = configuration.GetConnectionString("DefaultConnection");
+        string connectionString = _configuration.GetConnectionString("DefaultConnection");
         int newIdNumber = -1;
 
         string sqlStatement = "Update dbo.Joke SET " +
@@ -167,9 +174,9 @@ public class JokeDAO : IJokeDataService
         return newIdNumber;
     } 
 
-    public Joke FindId(int? id, IConfiguration configuration)
+    public Joke FindId(int? id)
     {
-        string connectionString = configuration.GetConnectionString("DefaultConnection");
+        string connectionString = _configuration.GetConnectionString("DefaultConnection");
         Joke? jokes = null;
 
         string sqlStatement = "Select * FROM dbo.Joke WHERE Id = @Id";
@@ -205,9 +212,9 @@ public class JokeDAO : IJokeDataService
     }
 
     //Function that returns a joke at random
-    public Joke RandomJoke(IConfiguration configuration)
+    public Joke RandomJoke()
     {
-        string connectionString = configuration.GetConnectionString("DefaultConnection");
+        string connectionString = _configuration.GetConnectionString("DefaultConnection");
         Joke? joke = null;
 
         string sqlStatement = "SELECT TOP 1 * FROM dbo.Joke ORDER BY NEWID()";

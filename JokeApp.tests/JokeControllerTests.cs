@@ -5,63 +5,56 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using JokeApp.Services;
 using JokeApp.Models;
+using Autofac.Extras.Moq;
 
-namespace JokeApp.tests
+namespace JokeApp.tests;
+
+public class HomeControllerTests : IClassFixture<JokeController>
 {
-    public class HomeControllerTests
+    [Fact]
+    public void Index_ReturnsAView()
     {
-        private readonly IConfiguration _configuration;
+        // Arrange
+        var mock = new Mock<IJokeDataService>();
+            mock.Setup(x => x.GetAllJokes())
+            .Returns(GetSampleJokes());
+        var controller = new JokeController(mock.Object);
 
-        HomeControllerTests(IConfiguration configuration) 
+        // Act
+        var result = controller.Index();
+
+        // Assert
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var model = Assert.IsAssignableFrom<IEnumerable<Joke>>(
+            viewResult.ViewData.Model);
+        Assert.Equal(4, model.Count());
+    }
+
+
+
+    private List<Joke> GetSampleJokes()
+    {
+        List<Joke> jokes = new List<Joke>()
         {
-            _configuration = configuration;
-        }
 
-        [Fact]
-        public void Index_ReturnsAView()
-        {
-            // Arrange
-            var mock = new Mock<IJokeDataService>()
-                .Setup(x => x.GetAllJokes(_configuration))
-                .Returns(GetSampleJokes());
-            var controller = new JokeController(_configuration);
-
-            // Act
-            var result = controller.Index();
-
-            // Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            var model = Assert.IsAssignableFrom<IEnumerable<Joke>>(
-                viewResult.ViewData.Model);
-            Assert.Equal(4, model.Count());
-        }
-
-         
-
-        private List<Joke> GetSampleJokes()
-        {
-            List<Joke> jokes = new List<Joke>()
+            new Joke
             {
+                JokeQuestion = "The",
+                JokeAnswer = "Frisbe"
+            },
+            new Joke
+            {
+                JokeQuestion = "The",
+                JokeAnswer = "Frisbe"
+            },
+            new Joke
+            {
+                JokeQuestion = "The",
+                JokeAnswer = "Frisbe"
+            }
 
-			    new Joke
-			    {
-				    JokeQuestion = "The",
-				    JokeAnswer = "Frisbe"
-			    },
-			    new Joke
-			    {
-				    JokeQuestion = "The",
-				    JokeAnswer = "Frisbe"
-			    },
-			    new Joke
-			    {
-				    JokeQuestion = "The",
-				    JokeAnswer = "Frisbe"
-			    }
+        };
 
-            };
-
-            return jokes;
-        }
+        return jokes;
     }
 }
