@@ -9,7 +9,7 @@ using Autofac.Extras.Moq;
 
 namespace JokeApp.tests;
 
-public class HomeControllerTests : IClassFixture<JokeController>
+public class HomeControllerTests
 {
     [Fact]
     public void Index_ReturnsAView()
@@ -27,7 +27,7 @@ public class HomeControllerTests : IClassFixture<JokeController>
         var viewResult = Assert.IsType<ViewResult>(result);
         var model = Assert.IsAssignableFrom<IEnumerable<Joke>>(
             viewResult.ViewData.Model);
-        Assert.Equal(4, model.Count());
+        Assert.Equal(3, model.Count());
     }
 
 
