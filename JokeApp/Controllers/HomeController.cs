@@ -8,18 +8,17 @@ namespace JokeApp.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly IConfiguration _configuration; 
+    private readonly IJokeDataService _jokeData; 
 
-    public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
+    public HomeController(ILogger<HomeController> logger, IJokeDataService jokeData)
     {
-        _configuration = configuration;
+        _jokeData = jokeData;
         _logger = logger;
     }
 
     public IActionResult Index()
     {
-        JokeDAO jokes = new JokeDAO();
-        Joke joke = jokes.RandomJoke(_configuration);
+        Joke joke = _jokeData.RandomJoke();
         return View(joke);
     }
 

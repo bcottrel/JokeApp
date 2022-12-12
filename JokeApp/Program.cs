@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using JokeApp.Services.Data;
 using JokeApp.Services.DbAccess;
 using Auth0.AspNetCore.Authentication;
+using JokeApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,7 @@ builder.Services.AddAuth0WebAppAuthentication(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<ISqlDataAccess, SqlDataAccess>();
 builder.Services.AddSingleton<IJokeData, JokeData>();
+builder.Services.AddScoped<IJokeDataService, JokeDAO>();
 
 var app = builder.Build();
 
